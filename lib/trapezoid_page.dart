@@ -1,206 +1,201 @@
 import 'package:flutter/material.dart';
+// นำเข้า material.dart เพื่อใช้ Widget พื้นฐานของ Flutter
 
+// ===================================================
+// หน้าคำนวณเส้นรอบรูปสี่เหลี่ยมคางหมู
+// ===================================================
 class TrapezoidPerimeterPage extends StatefulWidget {
   const TrapezoidPerimeterPage({super.key});
+  // constructor ของหน้า
 
   @override
   State<TrapezoidPerimeterPage> createState() =>
       _TrapezoidPerimeterPageState();
+// เชื่อม StatefulWidget กับคลาส State
 }
 
+// ===================================================
+// คลาส State ใช้เก็บค่า + คำนวณ + แสดงผล
+// ===================================================
 class _TrapezoidPerimeterPageState
     extends State<TrapezoidPerimeterPage> {
-  int _frontSide = 0;
-  int _backSide = 0;
-  int _sideOne = 0;
-  int _sideTwo = 0;
-  int _perimeter = 0;
 
-  final TextEditingController _frontCtrl = TextEditingController();
-  final TextEditingController _backCtrl = TextEditingController();
-  final TextEditingController _sideOneCtrl = TextEditingController();
-  final TextEditingController _sideTwoCtrl = TextEditingController();
+  // ---------------------------
+  // ตัวแปรเก็บค่าด้านของสี่เหลี่ยมคางหมู
+  // ---------------------------
+  int _topBase = 0;     // ฐานบน
+  int _bottomBase = 0;  // ฐานล่าง
+  int _leftSide = 0;    // ด้านซ้าย
+  int _rightSide = 0;   // ด้านขวา
 
+  int _perimeter = 0;   // ตัวแปรเก็บค่าเส้นรอบรูป
+
+  // ---------------------------
+  // Controller สำหรับดึงค่าจาก TextField
+  // ---------------------------
+  final TextEditingController _topCtrl = TextEditingController();
+  final TextEditingController _bottomCtrl = TextEditingController();
+  final TextEditingController _leftCtrl = TextEditingController();
+  final TextEditingController _rightCtrl = TextEditingController();
+
+  // ---------------------------
+  // รูปแบบ TextField (ไม่มีเส้นรอบ)
+  // ❌ ห้ามใส่ const เพราะต้องใช้ copyWith()
+  // ---------------------------
   final InputDecoration _textFieldStyle = InputDecoration(
-    filled: true,
-    fillColor: Colors.white,
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(18),
-      borderSide: BorderSide.none,
-    ),
+    filled: true, // ทำให้ช่องกรอกมีพื้นหลัง
+    fillColor: Colors.white, // สีพื้นหลังช่องกรอก
+    border: InputBorder.none, // เอาเส้นขอบออก
+    enabledBorder: InputBorder.none, // ตอนยังไม่โฟกัส
+    focusedBorder: InputBorder.none, // ตอนกำลังพิมพ์
   );
 
-  void _calPerimeter() {
-    setState(() {
-      _frontSide = int.tryParse(_frontCtrl.text) ?? 0;
-      _backSide = int.tryParse(_backCtrl.text) ?? 0;
-      _sideOne = int.tryParse(_sideOneCtrl.text) ?? 0;
-      _sideTwo = int.tryParse(_sideTwoCtrl.text) ?? 0;
+  // ===================================================
+  // ฟังก์ชันคำนวณเส้นรอบรูปสี่เหลี่ยมคางหมู
+  // ===================================================
+  void _calculatePerimeter() {
+    // ดึงค่าจาก TextField และแปลงเป็น int
+    // ถ้าแปลงไม่ได้ให้เป็น 0 เพื่อป้องกัน error
+    _topBase = int.tryParse(_topCtrl.text) ?? 0;
+    _bottomBase = int.tryParse(_bottomCtrl.text) ?? 0;
+    _leftSide = int.tryParse(_leftCtrl.text) ?? 0;
+    _rightSide = int.tryParse(_rightCtrl.text) ?? 0;
 
+    // แจ้ง Flutter ให้รีเฟรชหน้าจอ
+    setState(() {
+      // สูตรเส้นรอบรูปสี่เหลี่ยมคางหมู
       _perimeter =
-          _frontSide + _backSide + _sideOne + _sideTwo;
+          _topBase + _bottomBase + _leftSide + _rightSide;
     });
   }
 
   @override
-  void dispose() {
-    _frontCtrl.dispose();
-    _backCtrl.dispose();
-    _sideOneCtrl.dispose();
-    _sideTwoCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // build ใช้สร้าง UI
     return Scaffold(
+
+      // ---------------------------
+      // AppBar ด้านบน
+      // ---------------------------
       appBar: AppBar(
-        title: const Text(
-          "เส้นรอบรูปสี่เหลี่ยมคางหมู",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: const Text("เส้นรอบรูปสี่เหลี่ยมคางหมู"),
         centerTitle: true,
-        backgroundColor: const Color(0xFFEDE7F6),
-        foregroundColor: Colors.deepPurple,
-        elevation: 0,
+        backgroundColor:
+        Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFF3E5F5),
-              Color(0xFFE1F5FE),
-            ],
+
+      // ---------------------------
+      // ส่วนเนื้อหาหลัก
+      // ---------------------------
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+
+        child: Card(
+          elevation: 6, // เงาของ Card
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Card(
-            elevation: 8,
-            shadowColor: Colors.deepPurple.withOpacity(0.25),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFD1C4E9),
-                    ),
-                    child: const Icon(
-                      Icons.change_history,
-                      size: 50,
-                      color: Colors.deepPurple,
-                    ),
+
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+
+            child: Column(
+              children: [
+
+                // ไอคอนแทนรูปทรงเรขาคณิต
+                const Icon(
+                  Icons.change_history,
+                  size: 60,
+                  color: Colors.deepPurple,
+                ),
+
+                const SizedBox(height: 20),
+
+                // แสดงผลลัพธ์เส้นรอบรูป
+                Text(
+                  "เส้นรอบรูป = $_perimeter หน่วย",
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 20),
+                ),
 
-                  Text(
-                    "ด้านหน้า $_frontSide เมตร\n"
-                        "ด้านหลัง $_backSide เมตร\n"
-                        "ด้านข้าง 1 $_sideOne เมตร\n"
-                        "ด้านข้าง 2 $_sideTwo เมตร",
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: Colors.deepPurple,
-                    ),
-                    textAlign: TextAlign.center,
+                const SizedBox(height: 30),
+
+                // ---------------------------
+                // ช่องกรอกฐานบน
+                // ---------------------------
+                TextField(
+                  controller: _topCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: _textFieldStyle.copyWith(
+                    labelText: "ฐานบน",
                   ),
+                ),
 
-                  const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
-                  Text(
-                    "เส้นรอบรูป = $_perimeter เมตร",
-                    style: const TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
-                    ),
+                // ---------------------------
+                // ช่องกรอกฐานล่าง
+                // ---------------------------
+                TextField(
+                  controller: _bottomCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: _textFieldStyle.copyWith(
+                    labelText: "ฐานล่าง",
                   ),
+                ),
 
-                  const SizedBox(height: 30),
+                const SizedBox(height: 16),
 
-                  _buildTextField(
-                    controller: _frontCtrl,
-                    label: "ด้านหน้า",
-                    icon: Icons.horizontal_rule,
+                // ---------------------------
+                // ช่องกรอกด้านซ้าย
+                // ---------------------------
+                TextField(
+                  controller: _leftCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: _textFieldStyle.copyWith(
+                    labelText: "ด้านซ้าย",
                   ),
-                  const SizedBox(height: 18),
+                ),
 
-                  _buildTextField(
-                    controller: _backCtrl,
-                    label: "ด้านหลัง",
-                    icon: Icons.horizontal_rule,
+                const SizedBox(height: 16),
+
+                // ---------------------------
+                // ช่องกรอกด้านขวา
+                // ---------------------------
+                TextField(
+                  controller: _rightCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: _textFieldStyle.copyWith(
+                    labelText: "ด้านขวา",
                   ),
-                  const SizedBox(height: 18),
+                ),
 
-                  _buildTextField(
-                    controller: _sideOneCtrl,
-                    label: "ด้านข้าง 1",
-                    icon: Icons.straighten,
-                  ),
-                  const SizedBox(height: 18),
+                const SizedBox(height: 30),
 
-                  _buildTextField(
-                    controller: _sideTwoCtrl,
-                    label: "ด้านข้าง 2",
-                    icon: Icons.straighten,
-                  ),
+                // ---------------------------
+                // ปุ่มคำนวณ
+                // ---------------------------
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
 
-                  const SizedBox(height: 30),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: 55,
-                    child: ElevatedButton.icon(
-                      onPressed: _calPerimeter,
-                      icon: const Icon(Icons.calculate),
-                      label: const Text(
-                        "คำนวณ",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                        const Color(0xFFB39DDB),
-                        foregroundColor: Colors.white,
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                          BorderRadius.circular(20),
-                        ),
+                  child: ElevatedButton(
+                    onPressed: _calculatePerimeter,
+                    child: const Text(
+                      "คำนวณเส้นรอบรูป",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-  }) {
-    return TextField(
-      controller: controller,
-      keyboardType: TextInputType.number,
-      decoration: _textFieldStyle.copyWith(
-        labelText: label,
-        prefixIcon: Icon(icon, color: Colors.deepPurple),
       ),
     );
   }
