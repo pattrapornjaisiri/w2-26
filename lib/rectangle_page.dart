@@ -1,55 +1,79 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
+// เรียกใช้ Material Design ซึ่งเป็นชุด UI พื้นฐานของ Flutter
+// เช่น Scaffold, AppBar, TextField, Button เป็นต้น
 
+// =======================
+// หน้า RectanglePage
+// =======================
 class RectanglePage extends StatefulWidget {
-  const RectanglePage({super.key}); // พท.สี่เหลี่ยม = กว้าง * ย
+  const RectanglePage({super.key});
+  // ใช้ StatefulWidget เพราะหน้านี้มีการเปลี่ยนแปลงข้อมูล
+  // เช่น รับค่าจากผู้ใช้ และคำนวณผลลัพธ์ใหม่
 
   @override
-  State<RectanglePage> createState() => RectanglePageState(); // คลาสแม่
-} //มีการคำนวณ มีการเปลี่ยนค่า
+  State<RectanglePage> createState() => RectanglePageState();
+  // เชื่อม Widget กับ State เพื่อเก็บข้อมูลและตรรกะการทำงาน
+}
 
+// =======================
+// คลาส State (ควบคุมข้อมูลและการทำงาน)
+// =======================
 class RectanglePageState extends State<RectanglePage> {
-  // คลาสลูก
 
-  int _width = 0; //ใส่_เพื่อให้เป็นไพรเวท ใช้เฉพาะในคลาส
-  int _length = 0;
-  int _area = 0;
+  // ตัวแปรเก็บค่า (State)
+  int _width = 0;   // ความกว้าง (ใส่ _ เพื่อให้เป็น private)
+  int _length = 0;  // ความยาว
+  int _area = 0;    // พื้นที่สี่เหลี่ยม
 
-  TextEditingController _widthCtrl =
-  TextEditingController(); //เพิื่อควบคุมเอาไว้ดึงค่าจากช่อง อินพุท
+  // TextEditingController ใช้ควบคุมและดึงค่าจาก TextField
+  TextEditingController _widthCtrl = TextEditingController();
   TextEditingController _lengthCtrl = TextEditingController();
 
-  //แม่แบบในการใข้งานซ้้ำ
+  // =======================
+  // แม่แบบตกแต่ง TextField
+  // =======================
   final InputDecoration _textFiedStyle = InputDecoration(
-    //คลาส
-    filled: true, //พารามิตเตอร์
-    fillColor: Colors.white, // เปลี่ยนเป็นสีขาวให้ดูสะอาดขึ้น
+    filled: true, // ทำให้ช่องมีสีพื้น
+    fillColor: Colors.white, // สีพื้นหลังของช่องกรอกข้อมูล
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14), // มุมโค้ง
+      borderRadius: BorderRadius.circular(14), // ทำมุมโค้ง
     ),
   );
 
+  // =======================
+  // ฟังก์ชันคำนวณพื้นที่
+  // =======================
   void _calRectangle() {
-    //ฟังชั่นไม่คืนค่า //ฟังชั่นคำนวณ
-    _width = int.tryParse(_widthCtrl.text) ?? 0; // พยายามดึงค่่า
+    // ดึงค่าจาก TextField แล้วแปลงเป็น int
+    // ถ้าแปลงไม่ได้จะใช้ค่า 0 เพื่อป้องกัน error
+    _width = int.tryParse(_widthCtrl.text) ?? 0;
     _length = int.tryParse(_lengthCtrl.text) ?? 0;
 
+    // setState ใช้แจ้ง Flutter ว่ามีการเปลี่ยนค่า
+    // เพื่อให้ UI อัปเดตผลลัพธ์ใหม่
     setState(() {
-      _area = _width * _length; // ดัึงค่ามาคำนวณ
+      _area = _width * _length; // สูตรคำนวณพื้นที่สี่เหลี่ยม
     });
   }
 
+  // =======================
+  // ส่วนแสดงผลหน้าจอ
+  // =======================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // AppBar ด้านบนของหน้าจอ
       appBar: AppBar(
         title: Text("คำนวณพื้นที่สี่เหลี่ยม"), // ชื่อหน้า
-        centerTitle: true,
+        centerTitle: true, // จัดให้อยู่ตรงกลาง
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
+
+      // เนื้อหาหลักของหน้า
       body: Container(
-        width: double.infinity,
+        width: double.infinity, // ให้กว้างเต็มจอ
         decoration: BoxDecoration(
-          // พื้นหลังไล่สี
+          // พื้นหลังแบบไล่สีจากบนลงล่าง
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -59,13 +83,16 @@ class RectanglePageState extends State<RectanglePage> {
             ],
           ),
         ),
+
+        // ป้องกันจอล้นเมื่อคีย์บอร์ดเด้งขึ้น
         child: SingleChildScrollView(
-          // ป้องกันจอล้น
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
+
+              // Card ใช้รวมเนื้อหาให้ดูเป็นกล่อง
               Card(
-                elevation: 6, // เงา
+                elevation: 6, // ความสูงของเงา
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -73,17 +100,25 @@ class RectanglePageState extends State<RectanglePage> {
                   padding: const EdgeInsets.all(24),
                   child: Column(
                     children: [
+
+                      // ไอคอนสี่เหลี่ยม
                       Icon(
                         Icons.crop_square_rounded,
                         size: 60,
                         color: Colors.indigo,
                       ),
+
                       SizedBox(height: 20),
+
+                      // แสดงค่าความกว้างและความยาว
                       Text(
                         "กว้าง $_width เมตร ยาว $_length เมตร",
                         style: TextStyle(fontSize: 18),
                       ),
+
                       SizedBox(height: 8),
+
+                      // แสดงผลลัพธ์พื้นที่
                       Text(
                         "พื้นที่คือ $_area ตารางเมตร",
                         style: TextStyle(
@@ -91,18 +126,23 @@ class RectanglePageState extends State<RectanglePage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+
                       SizedBox(height: 30),
+
+                      // ช่องกรอกความกว้าง
                       TextField(
-                        controller: _widthCtrl, // เรียกใช้งาน คอนโทรเลอร์
-                        keyboardType: TextInputType.number,
+                        controller: _widthCtrl, // ผูกกับ controller
+                        keyboardType: TextInputType.number, // รับเฉพาะตัวเลข
                         decoration: _textFiedStyle.copyWith(
-                          //เรียกใช้งานคลาส
                           label: Text("ความกว้าง"),
                           hint: Text("กรอกความกว้าง"),
                           prefixIcon: Icon(Icons.width_full),
                         ),
                       ),
+
                       SizedBox(height: 20),
+
+                      // ช่องกรอกความยาว
                       TextField(
                         controller: _lengthCtrl,
                         keyboardType: TextInputType.number,
@@ -112,12 +152,16 @@ class RectanglePageState extends State<RectanglePage> {
                           prefixIcon: Icon(Icons.height),
                         ),
                       ),
+
                       SizedBox(height: 30),
+
+                      // ปุ่มคำนวณ
                       SizedBox(
                         width: double.infinity,
                         height: 55,
                         child: ElevatedButton.icon(
-                          onPressed: () => _calRectangle(), // เรียกฟังก์ชันคำนวณ
+                          onPressed: () => _calRectangle(),
+                          // เมื่อกดปุ่ม จะเรียกฟังก์ชันคำนวณ
                           icon: Icon(Icons.calculate),
                           label: Text(
                             "คำนวณ",
@@ -143,6 +187,6 @@ class RectanglePageState extends State<RectanglePage> {
           ),
         ),
       ),
-    ); //ให้อยู่ตรงกลาง
+    );
   }
 }
